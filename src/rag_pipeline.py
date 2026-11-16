@@ -131,7 +131,7 @@ class RAGPipeline:
                 self.vector_store.load()
                 logger.info("Loaded existing vector store")
                 return
-        except (FileNotFoundError, Exception) as e:
+        except FileNotFoundError as e:
             logger.info(f"Creating new vector store: {e}")
         
         # Prepare data

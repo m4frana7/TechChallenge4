@@ -9,7 +9,8 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 import numpy as np
 import faiss
-from .config import VECTOR_STORE_PATH
+from .config import VECTOR_STORE_PATH, PROJECT_ROOT, EMBEDDING_MODEL
+from .bundled_store import load_bundled_store
 
 logger = logging.getLogger(__name__)
 
@@ -155,6 +156,17 @@ class VectorStore:
     def load(self):
         """Load the vector store from disk"""
         logger.info(f"Loading vector store from {self.store_path}")
+
+        # The deployed app uses a precomputed index instead of encoding all reviews.
+        bundle_path = PROJECT_ROOT / "assets" / "search_index"
+        if self.store_path == VECTOR_STORE_PATH and (bundle_path / "manifest.json").exists():
+            self.index, self.documents = load_bundled_store(
+                bundle_path, EMBEDDING_MODEL, self.dimension
+            )
+            # FAISS already holds the vectors; retaining another copy wastes memory.
+            self.embeddings = None
+            logger.info("Loaded precomputed index: %s documents", len(self.documents))
+            return
         
         # Load FAISS index
         index_path = self.store_path / "index.faiss"
