@@ -325,12 +325,19 @@ O estilo está em `app/styles.css` e o tema nativo em `.streamlit/config.toml`.
 
 ### Dados e configuração local
 
-Este repositório contém o código e o notebook. Datasets, modelos, índice vetorial,
-ambiente virtual e chaves de API são mantidos fora do Git.
-Baixe os datasets Olist pelo link da seção Dataset, coloque os CSVs em `dados/`
-e execute o notebook para gerar `dados/reviews_for_rag.csv`.
-O modelo será baixado e o índice será criado na primeira inicialização.
-Copie `.env.example` para `.env` e configure sua chave localmente.
+Este repositório contém o código, o notebook e o dataset preparado
+`dados/reviews_for_rag.csv` (40.641 avaliações antes da limpeza). Esse CSV
+acompanha o deploy para evitar o erro de arquivo ausente no Streamlit Cloud.
+A preparação do pipeline filtra a base para 37.488 documentos.
+
+Os datasets brutos, modelos, índice vetorial, ambiente virtual e chaves de API
+continuam fora do Git. O modelo será baixado e o índice será criado na primeira
+inicialização; essa etapa pode levar alguns minutos no servidor.
+Copie `.env.example` para `.env` e configure sua chave localmente. No Streamlit
+Community Cloud, configure `GROQ_API_KEY` e `GROQ_MODEL` em **Settings → Secrets**.
+
+Para refazer a análise, baixe os datasets Olist pelo link da seção Dataset,
+coloque os CSVs em `dados/` e execute o notebook.
 
 ### Validação realizada
 

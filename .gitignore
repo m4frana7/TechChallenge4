@@ -42,8 +42,9 @@ wheels/
 .DS_Store
 Thumbs.db
 
-# Data (exceto exemplos)
+# Dados brutos fora do Git; dataset preparado incluído para o deploy
 dados/*.csv
+!dados/reviews_for_rag.csv
 
 
 # Vector stores
