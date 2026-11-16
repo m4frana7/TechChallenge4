@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "model": "paraphrase-multilingual-MiniLM-L12-v2",
+  "dimension": 384,
+  "documents": 37488,
+  "parts": [
+    "index.gz.part00",
+    "index.gz.part01",
+    "index.gz.part02",
+    "index.gz.part03",
+    "index.gz.part04",
+    "index.gz.part05",
+    "index.gz.part06"
+  ],
+  "sha256": "4a9f647130b666fe2557663e3bef34909e3d323d6c571b116479f64c6f8db65c"
+}
