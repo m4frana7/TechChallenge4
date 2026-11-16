@@ -37,15 +37,20 @@ if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
 
+@st.cache_resource(show_spinner=False, max_entries=1)
+def load_pipeline(llm_provider: str):
+    """Share the read-only search resources across sessions and reruns."""
+    pipeline = RAGPipeline(llm_provider=llm_provider)
+    pipeline.setup()
+    pipeline.build_knowledge_base()
+    return pipeline
+
+
 def initialize_pipeline(llm_provider: str):
     """Initialize RAG pipeline"""
     try:
-        with st.spinner("🔧 Inicializando sistema inteligente..."):
-            pipeline = RAGPipeline(llm_provider=llm_provider)
-            pipeline.setup()
-            
-            with st.spinner("📚 Carregando base de conhecimento..."):
-                pipeline.build_knowledge_base()
+        with st.spinner("Carregando modelo e índice de busca pronto..."):
+            pipeline = load_pipeline(llm_provider)
             
             st.session_state.pipeline = pipeline
             st.session_state.ready = True
