@@ -331,8 +331,9 @@ acompanha o deploy para evitar o erro de arquivo ausente no Streamlit Cloud.
 A preparação do pipeline filtra a base para 37.488 documentos.
 
 Os datasets brutos, modelos, índice vetorial, ambiente virtual e chaves de API
-continuam fora do Git. O modelo será baixado e o índice será criado na primeira
-inicialização; essa etapa pode levar alguns minutos no servidor.
+continuam fora do Git. O índice pronto em `assets/search_index/` é carregado na inicialização, sem
+recalcular os embeddings das avaliações. O modelo ainda é baixado no primeiro
+acesso de um servidor novo. O Streamlit mantém modelo e índice em cache.
 Copie `.env.example` para `.env` e configure sua chave localmente. No Streamlit
 Community Cloud, configure `GROQ_API_KEY` e `GROQ_MODEL` em **Settings → Secrets**.
 
@@ -358,3 +359,27 @@ streamlit run app/streamlit_app.py
 
 Limitações identificadas na busca atual: `top_k` maior que o índice pode repetir
 fontes, e filtros aplicados após o `top_k` podem omitir documentos compatíveis.
+
+
+### Inicialização rápida na nuvem
+
+O índice FAISS de 37.488 documentos é distribuído compactado em sete partes
+em `assets/search_index/`, com documentos em JSON compactado. As partes são
+reunidas e verificadas por SHA-256 antes da leitura. Nenhuma avaliação precisa
+ser reprocessada para iniciar a aplicação. O índice mantém os vetores float32
+originais, sem redução de documentos ou alteração do modelo. A matriz duplicada
+de embeddings não é mantida em memória durante as buscas.
+
+O cache `st.cache_resource` reutiliza a base entre sessões no mesmo servidor.
+Um reinício do servidor ainda pode exigir o download do modelo de embeddings.
+Erros de integridade ou modelo incompatível são exibidos em vez de iniciar
+um reprocessamento demorado silenciosamente.
+
+Para atualizar o pacote a partir de um índice local confiável já gerado:
+
+```bash
+python scripts/package_search_index.py /caminho/para/data/vector_store
+```
+
+Depois publique todos os arquivos de `assets/search_index/` juntos. O pacote
+atual corresponde ao modelo `paraphrase-multilingual-MiniLM-L12-v2`.
